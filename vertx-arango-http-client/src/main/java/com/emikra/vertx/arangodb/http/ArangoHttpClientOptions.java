@@ -13,7 +13,7 @@ public class ArangoHttpClientOptions {
     }
 
     public ArangoHttpClientOptions(ArangoHttpClientOptions options) {
-        this(options.json.copy());
+        this(options.toJson());
     }
 
     public ArangoHttpClientOptions(JsonObject json) {
@@ -21,7 +21,7 @@ public class ArangoHttpClientOptions {
     }
 
     public JsonObject toJson() {
-        return this.json;
+        return this.json.copy();
     }
 
     public String getHost() {
