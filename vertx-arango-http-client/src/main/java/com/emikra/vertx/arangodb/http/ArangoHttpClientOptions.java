@@ -13,11 +13,11 @@ public class ArangoHttpClientOptions {
     }
 
     public ArangoHttpClientOptions(ArangoHttpClientOptions options) {
-        this(options.toJson());
+        this(options.json);
     }
 
     public ArangoHttpClientOptions(JsonObject json) {
-        this.json = (json != null) ? json : new JsonObject();
+        this.json = (json != null) ? json.copy() : new JsonObject();
     }
 
     public JsonObject toJson() {
