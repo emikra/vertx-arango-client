@@ -2,6 +2,8 @@ package com.emikra.vertx.arangodb.simple.core;
 
 import com.emikra.vertx.arangodb.http.ArangoHttpClient;
 import com.emikra.vertx.arangodb.http.document.data.*;
+import com.emikra.vertx.arangodb.http.query.simple.data.AllOptions;
+import com.emikra.vertx.arangodb.http.query.simple.data.AllResponse;
 import com.emikra.vertx.arangodb.http.query.simple.data.ByExampleOptions;
 import com.emikra.vertx.arangodb.http.query.simple.data.ByExampleResponse;
 import com.emikra.vertx.arangodb.simple.indexes.impl.FullTextIndex;
@@ -59,8 +61,12 @@ public class SimpleArangoCollection {
         arango.document(res -> res.result().remove(ArangoUtil.documentHandle(collection, key), resultHandler));
     }
 
-    public void all(Handler<AsyncResult<GetAllDocumentsResponse>> resultHandler) {
-        arango.document(res -> res.result().getAll(collection, resultHandler));
+    public void all(Handler<AsyncResult<AllResponse>> resultHandler) {
+        arango.simpleQuery(res -> {
+            AllOptions options = new AllOptions();
+            options.collection = collection;
+            res.result().all(options, resultHandler);
+        });
     }
 
     public void byExample(JsonObject example, Handler<AsyncResult<ByExampleResponse>> resultHandler) {
