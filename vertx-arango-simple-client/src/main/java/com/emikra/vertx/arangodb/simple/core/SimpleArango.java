@@ -17,6 +17,24 @@ class SimpleArango {
             }
             else if(ar.isError()) {
                 future = Future.failedFuture(ar.error);
+            } else if(ar.httpStatus() >= 400) {
+                SimpleArangoHttpError ex;
+
+                switch(ar.httpStatus()) {
+                    case 400:
+                        ex = new BadRequestError();
+                    case 404:
+                        ex = new NotFoundError();
+                        break;
+                    case 500:
+                        ex = new InternalServerError();
+                        break;
+                    default:
+                        ex = new SimpleArangoHttpError(ar.httpStatus());
+                        break;
+                }
+
+                future = Future.failedFuture(ex);
             } else {
                 future = Future.succeededFuture(ar);
             }
