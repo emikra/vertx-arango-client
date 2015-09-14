@@ -25,11 +25,11 @@ public class SimpleArangoClient {
     }
 
     public void createDatabase(String dbName, Handler<AsyncResult<CreateDatabaseResponse>> resultHandler) {
-        arango.database(res -> res.result().create(dbName, resultHandler));
+        arango.database(res -> res.result().create(dbName, SimpleArango.wrapHandler(resultHandler)));
     }
 
     public void dropDatabase(String dbName, Handler<AsyncResult<DropDatabaseResponse>> resultHandler) {
-        arango.database(res -> res.result().drop(dbName, resultHandler));
+        arango.database(res -> res.result().drop(dbName, SimpleArango.wrapHandler(resultHandler)));
     }
 
     public SimpleArangoDatabase db() {

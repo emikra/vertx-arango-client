@@ -3,7 +3,6 @@ package com.emikra.vertx.arangodb.integration;
 import com.emikra.vertx.arangodb.http.index.data.FullTextIndexResponse;
 import com.emikra.vertx.arangodb.http.index.data.HashIndexResponse;
 import com.emikra.vertx.arangodb.http.index.data.SkipListIndexResponse;
-import com.emikra.vertx.arangodb.simple.util.ArangoUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +25,7 @@ public class IndexIT extends SimpleArangoClientITBase {
     @Test
     public void canCreateHashIndex() {
         testCollection().newHashIndex().on("username", "email").create(res -> {
-            assertTrue(ArangoUtil.isSuccess(res));
+            assertTrue(res.succeeded());
 
             HashIndexResponse response = res.result();
             assertEquals("hash", response.getType());
@@ -42,7 +41,7 @@ public class IndexIT extends SimpleArangoClientITBase {
     @Test
     public void canCreateUniqueHashIndex() {
         testCollection().newHashIndex().on("username", "email").unique().create(res -> {
-            assertTrue(ArangoUtil.isSuccess(res));
+            assertTrue(res.succeeded());
 
             HashIndexResponse response = res.result();
             assertEquals("hash", response.getType());
@@ -58,7 +57,7 @@ public class IndexIT extends SimpleArangoClientITBase {
     @Test
     public void canCreateSparseHashIndex() {
         testCollection().newHashIndex().on("username", "email").sparse().create(res -> {
-            assertTrue(ArangoUtil.isSuccess(res));
+            assertTrue(res.succeeded());
 
             HashIndexResponse response = res.result();
             assertEquals("hash", response.getType());
@@ -74,7 +73,7 @@ public class IndexIT extends SimpleArangoClientITBase {
     @Test
     public void canCreateSkipListIndex() {
         testCollection().newSkipListIndex().on("username", "email").create(res -> {
-            assertTrue(ArangoUtil.isSuccess(res));
+            assertTrue(res.succeeded());
 
             SkipListIndexResponse response = res.result();
             assertEquals("skiplist", response.getType());
@@ -90,7 +89,7 @@ public class IndexIT extends SimpleArangoClientITBase {
     @Test
     public void canCreateUniqueSkipListIndex() {
         testCollection().newSkipListIndex().on("username", "email").unique().create(res -> {
-            assertTrue(ArangoUtil.isSuccess(res));
+            assertTrue(res.succeeded());
 
             SkipListIndexResponse response = res.result();
             assertEquals("skiplist", response.getType());
@@ -106,7 +105,7 @@ public class IndexIT extends SimpleArangoClientITBase {
     @Test
     public void canCreateSparseSkipListIndex() {
         testCollection().newSkipListIndex().on("username", "email").sparse().create(res -> {
-            assertTrue(ArangoUtil.isSuccess(res));
+            assertTrue(res.succeeded());
 
             SkipListIndexResponse response = res.result();
             assertEquals("skiplist", response.getType());
@@ -122,7 +121,7 @@ public class IndexIT extends SimpleArangoClientITBase {
     @Test
     public void canCreateFullTextIndex() {
         testCollection().newFullTextIndex().on("username").minLength(3).create(res -> {
-            assertTrue(ArangoUtil.isSuccess(res));
+            assertTrue(res.succeeded());
 
             FullTextIndexResponse response = res.result();
             assertEquals("fulltext", response.getType());

@@ -3,7 +3,6 @@ package com.emikra.vertx.arangodb.simple.indexes;
 import com.emikra.vertx.arangodb.http.ArangoHttpClient;
 import com.emikra.vertx.arangodb.http.index.data.CreateIndexOptions;
 import com.emikra.vertx.arangodb.http.index.data.GetIndexResponse;
-import com.emikra.vertx.arangodb.simple.util.ArangoUtil;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -106,11 +105,10 @@ public abstract class Index<T extends GetIndexResponse, I extends Index> {
     public Future<T> createFuture() {
         Future<T> f = Future.future();
         this.create(res -> {
-            try {
-                ArangoUtil.validateResult(res);
+            if(res.succeeded()) {
                 f.complete(res.result());
-            } catch (Throwable t) {
-                f.fail(t);
+            } else {
+                f.fail(res.cause());
             }
         });
         return f;
