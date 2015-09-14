@@ -3,6 +3,7 @@ package com.emikra.vertx.arangodb.simple.indexes;
 import com.emikra.vertx.arangodb.http.ArangoHttpClient;
 import com.emikra.vertx.arangodb.http.index.data.CreateIndexOptions;
 import com.emikra.vertx.arangodb.http.index.data.GetIndexResponse;
+import com.emikra.vertx.arangodb.simple.core.SimpleArango;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -55,11 +56,8 @@ public abstract class Index<T extends GetIndexResponse, I extends Index> {
      * parameter's {@link AsyncResult#succeeded()} will return <tt>true</tt> as long
      * as the Arango HTTP API returned a valid HTTP response. Otherwise,
      * it @{AsyncResult#failed()} will return <tt>true</tt>.
-     * <p></p>
-     * <b>Note</b> This function and {@link #createFuture()} handle success and failure differently.
      *
      * @param resultHandler The {@link Handler} that will receive the result of the request.
-     * @see #createFuture()
      */
     @SuppressWarnings("unchecked")
     public void create(Handler<AsyncResult<T>> resultHandler) {
@@ -94,23 +92,15 @@ public abstract class Index<T extends GetIndexResponse, I extends Index> {
      * Returns a {@link Future} that completes when the request to create this index
      * has completed. If the index creation fails for any reason, including getting an HTTP
      * error response from the Arango <tt>index</tt> API, the returned {@link Future} will complete exceptionally.
-     * <p></p>
-     * <b>Note</b> This function and {@link #create(Handler)} handle success and failure differently.
      *
      * @return A {@link Future} that completes with the corresponding {@link GetIndexResponse}
      * subclass representing the result returned from the Arango <tt>index</tt> API, if it is a success response.
      * Otherwise, {@link Future} the future fails with a throwable containing an error message.
      * @see #create(Handler)
      */
-    public Future<T> createFuture() {
+    public Future<T> create() {
         Future<T> f = Future.future();
-        this.create(res -> {
-            if(res.succeeded()) {
-                f.complete(res.result());
-            } else {
-                f.fail(res.cause());
-            }
-        });
+        this.create(SimpleArango.futureHandler(f));
         return f;
     }
 }

@@ -6,6 +6,7 @@ import com.emikra.vertx.arangodb.http.collection.data.DropCollectionResponse;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 public class SimpleArangoDatabase {
 
@@ -25,22 +26,20 @@ public class SimpleArangoDatabase {
         arango.collection(res -> res.result().create(name, SimpleArango.wrapHandler(resultHandler)));
     }
 
-    public Future<CreateCollectionResponse> createCollectionFuture(String name) {
+    public Future<CreateCollectionResponse> createCollection(String name) {
         Future<CreateCollectionResponse> f = Future.future();
-
-        createCollection(name, res -> {
-            if(res.succeeded()) {
-                f.complete(res.result());
-            } else {
-                f.fail(res.cause());
-            }
-        });
-
+        createCollection(name, SimpleArango.futureHandler(f));
         return f;
     }
 
     public void dropCollection(String name, Handler<AsyncResult<DropCollectionResponse>> resultHandler) {
         arango.collection(res -> res.result().drop(name, SimpleArango.wrapHandler(resultHandler)));
+    }
+
+    public Future<DropCollectionResponse> dropCollection(String name) {
+        Future<DropCollectionResponse> f = Future.future();
+        dropCollection(name, SimpleArango.futureHandler(f));
+        return f;
     }
 
     public SimpleArangoCollection coll(String collection) {
