@@ -5,7 +5,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 
-class SimpleArango {
+public class SimpleArango {
 
     static <T extends ArangoResponse> Handler<AsyncResult<T>> wrapHandler(Handler<AsyncResult<T>> handler) {
         return res -> {
@@ -45,5 +45,15 @@ class SimpleArango {
 
     public static String documentHandle(String collectionName, String key) {
         return collectionName + "/" + key;
+    }
+
+    public static <T> Handler<AsyncResult<T>> futureHandler(Future<T> future) {
+        return res -> {
+          if(res.succeeded()) {
+              future.complete(res.result());
+          } else {
+              future.fail(res.cause());
+          }
+        };
     }
 }
