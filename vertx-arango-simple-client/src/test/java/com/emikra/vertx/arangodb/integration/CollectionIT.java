@@ -24,10 +24,10 @@ public class CollectionIT extends SimpleArangoClientITBase {
         String collectionName = "test-new-collection";
 
         testDatabase().createCollection(collectionName, createRes -> {
-            assertTrue(ArangoUtil.isSuccess(createRes));
+            assertTrue(createRes.succeeded());
             // Dropping the db is implicitly a check to ensure it was created
             testDatabase().dropCollection(collectionName, dropRes -> {
-                assertTrue(ArangoUtil.isSuccess(dropRes));
+                assertTrue(dropRes.succeeded());
                 testComplete();
             });
         });

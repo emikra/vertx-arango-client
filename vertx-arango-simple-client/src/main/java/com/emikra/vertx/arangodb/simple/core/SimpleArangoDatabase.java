@@ -3,7 +3,6 @@ package com.emikra.vertx.arangodb.simple.core;
 import com.emikra.vertx.arangodb.http.ArangoHttpClient;
 import com.emikra.vertx.arangodb.http.collection.data.CreateCollectionResponse;
 import com.emikra.vertx.arangodb.http.collection.data.DropCollectionResponse;
-import com.emikra.vertx.arangodb.simple.util.ArangoUtil;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -23,18 +22,17 @@ public class SimpleArangoDatabase {
     }
 
     public void createCollection(String name, Handler<AsyncResult<CreateCollectionResponse>> resultHandler) {
-        arango.collection(res -> res.result().create(name, resultHandler));
+        arango.collection(res -> res.result().create(name, SimpleArango.wrapHandler(resultHandler)));
     }
 
     public Future<CreateCollectionResponse> createCollectionFuture(String name) {
         Future<CreateCollectionResponse> f = Future.future();
 
         createCollection(name, res -> {
-            try {
-                ArangoUtil.validateResult(res);
+            if(res.succeeded()) {
                 f.complete(res.result());
-            } catch(Throwable t) {
-                f.fail(t);
+            } else {
+                f.fail(res.cause());
             }
         });
 
@@ -42,7 +40,7 @@ public class SimpleArangoDatabase {
     }
 
     public void dropCollection(String name, Handler<AsyncResult<DropCollectionResponse>> resultHandler) {
-        arango.collection(res -> res.result().drop(name, resultHandler));
+        arango.collection(res -> res.result().drop(name, SimpleArango.wrapHandler(resultHandler)));
     }
 
     public SimpleArangoCollection coll(String collection) {

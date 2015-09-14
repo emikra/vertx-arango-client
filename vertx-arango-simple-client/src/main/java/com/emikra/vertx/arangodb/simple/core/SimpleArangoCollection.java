@@ -1,7 +1,10 @@
 package com.emikra.vertx.arangodb.simple.core;
 
 import com.emikra.vertx.arangodb.http.ArangoHttpClient;
-import com.emikra.vertx.arangodb.http.document.data.*;
+import com.emikra.vertx.arangodb.http.document.data.CreateDocumentResponse;
+import com.emikra.vertx.arangodb.http.document.data.PatchDocumentResponse;
+import com.emikra.vertx.arangodb.http.document.data.RemoveDocumentResponse;
+import com.emikra.vertx.arangodb.http.document.data.ReplaceDocumentResponse;
 import com.emikra.vertx.arangodb.http.query.simple.data.AllOptions;
 import com.emikra.vertx.arangodb.http.query.simple.data.AllResponse;
 import com.emikra.vertx.arangodb.http.query.simple.data.ByExampleOptions;
@@ -10,7 +13,6 @@ import com.emikra.vertx.arangodb.simple.indexes.impl.FullTextIndex;
 import com.emikra.vertx.arangodb.simple.indexes.impl.GeoSpatialIndex;
 import com.emikra.vertx.arangodb.simple.indexes.impl.HashIndex;
 import com.emikra.vertx.arangodb.simple.indexes.impl.SkipListIndex;
-import com.emikra.vertx.arangodb.simple.util.ArangoUtil;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
@@ -46,26 +48,26 @@ public class SimpleArangoCollection {
     }
 
     public void createDocument(JsonObject document, Handler<AsyncResult<CreateDocumentResponse>> resultHandler) {
-        arango.document(res -> res.result().create(collection, document, resultHandler));
+        arango.document(res -> res.result().create(collection, document, SimpleArango.wrapHandler(resultHandler)));
     }
 
     public void patchDocument(String key, JsonObject document, Handler<AsyncResult<PatchDocumentResponse>> resultHandler) {
-        arango.document(res -> res.result().patch(ArangoUtil.documentHandle(collection, key), document, resultHandler));
+        arango.document(res -> res.result().patch(SimpleArango.documentHandle(collection, key), document, SimpleArango.wrapHandler(resultHandler)));
     }
 
     public void replaceDocument(String key, JsonObject document, Handler<AsyncResult<ReplaceDocumentResponse>> resultHandler) {
-        arango.document(res -> res.result().replace(ArangoUtil.documentHandle(collection, key), document, resultHandler));
+        arango.document(res -> res.result().replace(SimpleArango.documentHandle(collection, key), document, SimpleArango.wrapHandler(resultHandler)));
     }
 
     public void removeDocument(String key, Handler<AsyncResult<RemoveDocumentResponse>> resultHandler) {
-        arango.document(res -> res.result().remove(ArangoUtil.documentHandle(collection, key), resultHandler));
+        arango.document(res -> res.result().remove(SimpleArango.documentHandle(collection, key), SimpleArango.wrapHandler(resultHandler)));
     }
 
     public void all(Handler<AsyncResult<AllResponse>> resultHandler) {
         arango.simpleQuery(res -> {
             AllOptions options = new AllOptions();
             options.collection = collection;
-            res.result().all(options, resultHandler);
+            res.result().all(options, SimpleArango.wrapHandler(resultHandler));
         });
     }
 
@@ -84,7 +86,7 @@ public class SimpleArangoCollection {
             options.example = example;
             options.limit = (limit == 0 ? null : limit);
             options.skip = (skip == 0 ? null : skip);
-            res.result().byExample(options, resultHandler);
+            res.result().byExample(options, SimpleArango.wrapHandler(resultHandler));
         });
     }
 }
