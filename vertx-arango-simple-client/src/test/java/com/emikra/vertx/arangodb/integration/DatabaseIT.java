@@ -1,6 +1,5 @@
 package com.emikra.vertx.arangodb.integration;
 
-import com.emikra.vertx.arangodb.simple.util.ArangoUtil;
 import org.junit.Test;
 
 public class DatabaseIT extends SimpleArangoClientITBase {

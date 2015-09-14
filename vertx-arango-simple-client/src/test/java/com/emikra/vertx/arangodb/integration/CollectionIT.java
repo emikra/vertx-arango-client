@@ -1,6 +1,5 @@
 package com.emikra.vertx.arangodb.integration;
 
-import com.emikra.vertx.arangodb.simple.util.ArangoUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
