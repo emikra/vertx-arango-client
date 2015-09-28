@@ -19,4 +19,20 @@ public class DatabaseIT extends SimpleArangoClientITBase {
 
         await();
     }
+
+    @Test
+    public void databaseExistsReturnsTrue() {
+        client().databaseExists(client().db().getName(), res -> {
+            assertTrue(res.result());
+            testComplete();
+        });
+    }
+
+    @Test
+    public void databaseExistsReturnsFalse() {
+        client().databaseExists("non-existent-database", res -> {
+            assertFalse(res.result());
+            testComplete();
+        });
+    }
 }

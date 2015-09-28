@@ -46,6 +46,24 @@ public class SimpleArangoClient {
         return f;
     }
 
+    public void databaseExists(String dbName, Handler<AsyncResult<Boolean>> resultHandler) {
+        arango.database(res -> res.result().getInfo(dbName, SimpleArango.wrapHandler(info -> {
+            if(info.succeeded()) {
+                resultHandler.handle(Future.succeededFuture(true));
+            } else if(res.cause() instanceof NotFoundError) {
+                resultHandler.handle(Future.succeededFuture(false));
+            } else {
+                resultHandler.handle(Future.failedFuture(res.cause()));
+            }
+        })));
+    }
+
+    public Future<Boolean> databaseExists(String dbName) {
+        Future<Boolean> f = Future.future();
+        databaseExists(dbName, SimpleArango.futureHandler(f));
+        return f;
+    }
+
     public SimpleArangoDatabase db() {
         return db(options.getDatabase());
     }
