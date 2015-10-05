@@ -1,5 +1,6 @@
 package com.emikra.vertx.arangodb.simple.core;
 
+import com.emikra.vertx.arangodb.http.ArangoError;
 import com.emikra.vertx.arangodb.http.ArangoHttpClient;
 import com.emikra.vertx.arangodb.http.ArangoHttpClientOptions;
 import com.emikra.vertx.arangodb.http.database.data.CreateDatabaseOptions;
@@ -9,6 +10,8 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+
+import java.util.Objects;
 
 /**
  * A wrapper around {@link ArangoHttpClient} that provides a more fluent, simpler API
@@ -47,13 +50,13 @@ public class SimpleArangoClient {
     }
 
     public void databaseExists(String dbName, Handler<AsyncResult<Boolean>> resultHandler) {
-        arango.database(res -> res.result().getInfo(dbName, SimpleArango.wrapHandler(info -> {
+        arango.database(db -> db.result().getInfo(dbName, SimpleArango.wrapHandler(info -> {
             if(info.succeeded()) {
-                resultHandler.handle(Future.succeededFuture(true));
-            } else if(res.cause() instanceof NotFoundError) {
-                resultHandler.handle(Future.succeededFuture(false));
+                resultHandler.handle(Future.succeededFuture(Boolean.TRUE));
+            } else if(info.cause() instanceof NotFoundError) {
+                resultHandler.handle(Future.succeededFuture(Boolean.FALSE));
             } else {
-                resultHandler.handle(Future.failedFuture(res.cause()));
+                resultHandler.handle(Future.failedFuture(info.cause()));
             }
         })));
     }

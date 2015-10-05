@@ -1,5 +1,6 @@
 package com.emikra.vertx.arangodb.simple.core;
 
+import com.emikra.vertx.arangodb.http.ArangoError;
 import com.emikra.vertx.arangodb.http.ArangoResponse;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -12,17 +13,15 @@ public class SimpleArango {
             T ar = res.result();
             Future<T> future;
 
-            if(res.failed()) {
+            if (res.failed()) {
                 future = Future.failedFuture(res.cause());
-            }
-            else if(ar.isError()) {
-                future = Future.failedFuture(ar.error);
-            } else if(ar.httpStatus() >= 400) {
+            } else if (ar.httpStatus() != null && ar.httpStatus() >= 400) {
                 SimpleArangoHttpError ex;
 
-                switch(ar.httpStatus()) {
+                switch (ar.httpStatus()) {
                     case 400:
                         ex = new BadRequestError();
+                        break;
                     case 404:
                         ex = new NotFoundError();
                         break;
@@ -35,6 +34,8 @@ public class SimpleArango {
                 }
 
                 future = Future.failedFuture(ex);
+            } else if (ar.isError()) {
+                future = Future.failedFuture(ar.error);
             } else {
                 future = Future.succeededFuture(ar);
             }
@@ -49,11 +50,19 @@ public class SimpleArango {
 
     public static <T> Handler<AsyncResult<T>> futureHandler(Future<T> future) {
         return res -> {
-          if(res.succeeded()) {
-              future.complete(res.result());
-          } else {
-              future.fail(res.cause());
-          }
+            if (res.succeeded()) {
+                future.complete(res.result());
+            } else {
+                future.fail(res.cause());
+            }
         };
+    }
+
+    public static boolean isArangoError(Throwable t, int errorNum) {
+        if (t instanceof ArangoError) {
+            ArangoError ae = (ArangoError) t;
+            return (ae.errorNum == errorNum);
+        }
+        return false;
     }
 }
