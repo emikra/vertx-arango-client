@@ -26,6 +26,8 @@ public class DatabaseIT extends SimpleArangoClientITBase {
             assertTrue(res.result());
             testComplete();
         });
+
+        await();
     }
 
     @Test
@@ -34,5 +36,7 @@ public class DatabaseIT extends SimpleArangoClientITBase {
             assertFalse(res.result());
             testComplete();
         });
+
+        await();
     }
 }
